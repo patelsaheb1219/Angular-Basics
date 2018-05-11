@@ -1,6 +1,5 @@
 import { Component } from '@angular/core';
 import { StylesCompileDependency } from '@angular/compiler';
-
 @Component({
     selector:'sandbox',
     template:`
@@ -64,10 +63,139 @@ import { StylesCompileDependency } from '@angular/compiler';
 
         <div [style.font-size]="isSpecial ? 'x-large' : 'smaller'">Font size depend on isSpecial. </div>
         <div [ngStyle]="currentStyles">This is intially savable and special</div>
-        --> 
+         
 
         <p>My birthday is {{ birthday | date }}</p>
         <p>Your total is {{ total | currency}}</p>
+        -->
+        <h2>Hello World</h2>
+
+        <!--
+        <button (click)="fireEvent('Kishan Patel')">Cl ick Me</button>
+        <br>
+        <button (mouseover)="fireEvent($event)">Mouseover Event</button>
+        <br>
+        <button (mousedown)="fireEvent($event)">MouseDown Event</button>
+        <br>
+        <button (mouseup)="fireEvent($event)">MouseUp Event</button>
+        <br>
+        <button (dblclick)="fireEvent($event)">DoubleClick Event</button>
+        <br>
+        <button (drag)="fireEvent($event)">Drag Event</button>
+        <br>
+        <button (dragover)="fireEvent($event)">Dragover Event</button>  
+        
+        <button (click)="changeValue()">Change Value</button>
+        <div *ngIf="value">
+            <h1>{{ text }}</h1>
+        </div> 
+        
+        -->
+
+        <!-- Keyboard Events
+        <div>
+            <input type="text"  (keyup)="changeEvent($event)" placeholder="Keyup">
+        </div>
+        
+        <div>
+            <input type="text"  (keydown)="changeEvent($event)" placeholder="Keydown">
+        </div>
+        <div>
+            <input type="text"  (focus)="changeEvent($event)" placeholder="focus">
+        </div>
+        <div>
+            <input type="text"  (blur)="changeEvent($event)" placeholder="blur">
+        </div>
+        <div>
+            <input type="text"  (cut)="changeEvent($event)" placeholder="cut">
+        </div>
+        <div>
+            <input type="text"  (copy)="changeEvent($event)" placeholder="copy">
+        </div>
+        <div>
+            <input type="text"  (paste)="changeEvent($event)" placeholder="paste">
+        </div>
+
+        -->
+
+        <!-- ngModel
+        <div  class="container">
+            <form class="form-group">
+                <div>
+                    <label>Name :</label>
+                    <input type="text" name="name" [(ngModel)]="name" class="form-control"/>
+                </div>
+                <div>
+                    <label>Age :</label>
+                    <input type="number" [(ngModel)]="age" name="age" class="form-control"/>
+                </div>
+                <input type="submit" value="Submit" class="btn btn-success" />
+            </form>
+
+            <h4>Name : {{ name }}</h4>
+            <h4>Age : {{ age }}</h4>
+        </div>
+        -->
+
+        <!-- Form submission
+        <div class="container">
+            <form (submit)="onSubmit()">
+                <div class="form-group">
+                    <label>Name</label>
+                    <input type="text" name="name" [(ngModel)]="name" class="form-control" />
+                </div>
+                <input type="submit" value="Submit" class="btn btn-success"  />
+            </form>
+        </div>
+
+        <hr>
+        <ul class="list-group">
+            <li class="list-group-item" *ngFor="let user of users">{{ user }}</li>
+        </ul>
+        -->
+
+        <form novalidate #f="ngForm" (ngSubmit)="onSubmit(f)" >
+            <div class="form-group">
+                <label>Name</label>
+                <input 
+                    type="text" 
+                    class="form-control"  
+                    [(ngModel)] = "user.name" 
+                    name = "name" 
+                    #userName="ngModel"
+                    minlength="2" 
+                    required  
+                />
+                <div *ngIf="userName.errors?.required && userName.touched" class="alert alert-danger">Name is required</div>
+                <div *ngIf="userName.errors?.minlength && userName.touched" class="alert alert-danger">Name has minimum 2 character required</div>
+            </div>
+            <div class="form-group">
+                <label>Email</label>
+                <input 
+                    type="text" 
+                    class="form-control"  
+                    [(ngModel)] = "user.email" 
+                    name = "email"
+                    #userEmail="ngModel" 
+                    required  />
+                    <div *ngIf="userEmail.errors?.required && userEmail.touched" class="alert alert-danger">Email  is required</div>
+            </div>
+            <div class="form-group">
+                <label>Phone</label>
+                <input 
+                    type="text" 
+                    class="form-control"  
+                    [(ngModel)] = "user.phone"
+                    name = "phone"
+                    #userPhone ="ngModel"
+                    minlength="10"
+                    required   
+                />
+                <div *ngIf="userPhone.errors?.minlength && userPhone.touched" class="alert alert-danger">Enter valid Phone Number</div>
+            </div>
+            <input type="submit" value="Submit" class="btn btn-success" />
+        </form>
+    
     `,
     /*
     styles:[
@@ -85,9 +213,59 @@ import { StylesCompileDependency } from '@angular/compiler';
 })
 
 export class SandboxComponent{
+    // -- Form validation
+    user = {
+        name: '',
+        email: '',
+        phone:''
+    };
+
+    onSubmit({value , valid}){
+        if(valid){
+            console.log(value);
+        }else{
+            console.log('form is Invalid')
+        }
+    }
+    
+    // -- Form Submission
+    // name:string = '';
+    // users:string[] = ['Kishan' , 'Rahul' , 'Dhruvil']
+    
+    // onSubmit(){
+    //     this.users.push(this.name);
+    // }
+    
+    // -- ngModels
+    // name:string =  '';
+    // age:number = 0;
+    
+    
+    // -- Keyboard events
+    // changeEvent(e){
+    //     console.log(e.type);
+    // }
+    
+    
+    // -- Change properties with Events
+    // text:string = 'Hello World';
+    // value:boolean = true;
+
+    // changeValue(){
+    //     this.value = !this.value;
+        
+    // }
+    
+    
+    // -- Mouse Events
+    // fireEvent(greeting){
+    //     console.log(greeting);
+    // }
+    
+
     // --For Pipes
-    birthday = new Date(1997 , 9 , 21)
-    total = 500;
+    // birthday = new Date(1997 , 9 , 21)
+    // total = 500;
     
     // -- for ngStyle
     // isSpecial:boolean = true;
