@@ -1,5 +1,7 @@
 import { Component } from '@angular/core';
 import { StylesCompileDependency } from '@angular/compiler';
+import { DataService } from "../../services/data.service";
+
 @Component({
     selector:'sandbox',
     template:`
@@ -154,6 +156,7 @@ import { StylesCompileDependency } from '@angular/compiler';
         </ul>
         -->
 
+        <!-- Form validation 
         <form novalidate #f="ngForm" (ngSubmit)="onSubmit(f)" >
             <div class="form-group">
                 <label>Name</label>
@@ -195,7 +198,47 @@ import { StylesCompileDependency } from '@angular/compiler';
             </div>
             <input type="submit" value="Submit" class="btn btn-success" />
         </form>
-    
+
+        -->
+
+        <!--
+        <ul class="list-group">
+            <li  class="list-group-item" *ngFor="let d of data">{{d}}</li>
+        </ul>
+        -->
+        
+        <form (submit)="onSubmit(isEdit)">
+            <div class="form-group">
+                <label>Name</label>
+                <input type="text" class="form-control" [(ngModel)]="user.name" name="name"  />
+            </div>
+            
+            <div class="form-group">
+                <label>Email</label>
+                <input type="text" class="form-control" [(ngModel)]="user.email" name="email"  />
+            </div>
+            
+            <div class="form-group">
+                <label>Phone</label>
+                <input type="text" class="form-control" [(ngModel)]="user.phone" name="phone"  />
+            </div>
+            <input type="submit" class="btn btn-success" value="Submit"/>
+        </form>
+        <br>
+        <div class="well">
+            <div *ngFor="let d of users"> 
+                <ul class="list-group">
+                    <li  class="list-group-item" >Name :{{d.name}}</li>
+                    <li  class="list-group-item" >Email :{{d.email}}</li>
+                    <li  class="list-group-item" >Phone :{{d.phone}}</li>
+                </ul>
+                <br>
+                <button class="btn btn-primary btn-sm" (click)="onEditClick(d)">Edit</button>
+                <button class="btn btn-danger btn-sm" (click)="onDeleteClick(d.id)">Delete</button>
+                <br>
+                <br>
+            </div>    
+        </div>
     `,
     /*
     styles:[
@@ -213,20 +256,84 @@ import { StylesCompileDependency } from '@angular/compiler';
 })
 
 export class SandboxComponent{
-    // -- Form validation
+    // -- HTTP GET & POST service
+    users:any[];
     user = {
-        name: '',
-        email: '',
-        phone:''
-    };
+        id: '',
+        name : '',
+        email : '',
+        phone:'' 
+    }
+    isEdit:boolean = false;
 
-    onSubmit({value , valid}){
-        if(valid){
-            console.log(value);
-        }else{
-            console.log('form is Invalid')
+    constructor(public dataSevice:DataService){
+        this.dataSevice.getUsers().subscribe(users => {
+            this.users = users;
+            
+        });
+    }
+
+    onSubmit(isEdit){
+        if(isEdit){
+            this.dataSevice.updateUser(this.user).subscribe(user => {
+                    for(let i=0 ; i < this.users.length ; i++ ){
+                        if(this.users[i].id == this.user.id){
+                        this.users.splice(i , 1);
+                    }
+                }
+                this.users.unshift(user);    
+            });
+        }else {
+            this.dataSevice.addUser(this.user).subscribe(user => {
+                this.users.unshift(user);
+                console.log(user);
+            });
         }
     }
+
+    // -- HTTP DELETE service
+    onDeleteClick(id){
+        this.dataSevice.deleteUser(id).subscribe(res => {
+            for(let i=0 ; i < this.users.length ; i++ ){
+                if(this.users[i].id == id){
+                    this.users.splice(i , 1);
+                }
+            }
+        });
+    }
+
+    // -- HTTP PUT Service
+    onEditClick(user){
+        this.isEdit = true;
+        this.user = user;
+    }
+
+    
+    // -- Working with Obsevable
+    // data:any[] = [];
+    // constructor(public dataService:DataService){
+    //     this.dataService.getData().subscribe(data => {
+    //             this.data.push(data);
+    //         });     
+    //     }
+    // }
+
+
+
+    // -- Form validation
+    // user = {
+    //     name: '',
+    //     email: '',
+    //     phone:''
+    // };
+
+    // onSubmit({value , valid}){
+    //     if(valid){
+    //         console.log(value);
+    //     }else{
+    //         console.log('form is Invalid')
+    //     }
+    // }
     
     // -- Form Submission
     // name:string = '';
